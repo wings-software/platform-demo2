@@ -1,0 +1,28 @@
+upstream php {
+        server 127.0.0.1:9000;
+}
+
+server {
+    listen               8000;
+    root /usr/data/;
+    index index.php;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+    location ~ \.php$ {
+        fastcgi_pass php;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+       # internal;
+    }
+
+location /nginx_status {
+     stub_status on;
+     access_log   off;
+     allow all;
+   }
+
+}
