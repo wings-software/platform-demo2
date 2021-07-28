@@ -204,7 +204,7 @@ window.githublogin = "<? echo $_ENV["GITHUB_LOGIN"]; ?>";
 function loadvaccin(){
 	window.interval = setInterval(function(){
       $('#vaccin').load('result.php');
- },2000);
+ },3000);
 }
 
 function goto($hashtag){
@@ -266,15 +266,15 @@ function DoAction(v_action, v_value)
 			    <div class="container">
 			    	<div class="row align-items-center justify-content-between d-flex">
 				      <div id="logo">
-				        <a href="/"><img src="<? echo $_SESSION["logo"]; ?>" alt="" title="" height="50px"/></a>
+				        <a href="/<? echo $_ENV['GITHUB_LOGIN']; ?>"><img src="<? echo $_SESSION["logo"]; ?>" alt="" title="" height="50px"/></a>
 				      </div>
 				      <nav id="nav-menu-container">
 				        <ul class="nav-menu">
-				          <li class="menu-active"><a href="#home">Home</a></li>
-				          <li><a href="#service">share with people</a></li>
+				          <li class="menu-active"><? echo $_ENV["GITHUB_LOGIN"]; ?></li>
+				          <li><a href="#service">share it</a></li>
 						  <li class="menu-has-children"><a href="">CONFIG</a>
 				            <ul>
-				              <li>Customer: <form><input type="text" id="customer" value="<?php echo $_SESSION['buyer']; ?>"></form></li>
+				              <li>Customer: <form><input type="text" id="customer" value="<?php echo $_SESSION['buyer']; ?>"></form><a onclick="loadcustomer()" href="#"><img width="15px" src="img/play-icon.png"></a></li>
 							  <li>Logo: <form><input type="text" id="customer-logo" value="<?php echo $_SESSION['logo']; ?>"></form></li>
 							  <li>Background: <form><input type="text" id="background" value="<?php echo $_SESSION['background']; ?>"></form></li>
 							  <li>Link: <form><input type="text" id="link" value="<?php echo $_SESSION['link']; ?>"></form></li>
@@ -500,6 +500,11 @@ $( "#link" ).change(function() {
 	DoAction("update-link", $( "#link" ).val());
 			});
 //End
+
+function loadcustomer(){
+	 //document.getElementById($hashtag).style.visibility = "visible";
+     document.location = window.githublogin."/?id=" + $( "#customer" ).val();
+}
 
 function GetName()
 {

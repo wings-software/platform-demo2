@@ -1,6 +1,6 @@
 <?php
 
-include "../auth-module.php";
+include "../a_HomePage.php";
 //API VERIFICATION
 if ($_GET['func'] == 'verif')
 {
