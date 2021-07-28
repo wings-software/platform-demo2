@@ -503,7 +503,7 @@ $( "#link" ).change(function() {
 
 function loadcustomer(){
 	 //document.getElementById($hashtag).style.visibility = "visible";
-     document.location = window.githublogin."/?id=" + $( "#customer" ).val();
+     document.location = window.githublogin + "/?id=" + $( "#customer" ).val();
 }
 
 function GetName()
