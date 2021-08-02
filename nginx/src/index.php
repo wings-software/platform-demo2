@@ -8,6 +8,7 @@
   session_start();
 
 require("tools.php");
+include "a_HomePage.php";
 require_once "mobile-detect/Mobile_Detect.php";
 
 $detect = new Mobile_Detect;
@@ -71,18 +72,11 @@ if (!isset($_SESSION['buyer']))
 
 <script>
 var interval = null;
-var target = "<? echo $_ENV["GITHUB_LOGIN"]; ?>"
+var target = "<? echo $_ENV["GITHUB_LOGIN"]; ?>";
 </script>
 <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
-<script>
-window.githublogin = "<? echo $_ENV["GITHUB_LOGIN"]; ?>";
-// GET GITHUBLOGIN variable
-//$.get("data/githublogin.txt", function( my_var ) {
-//	githublogin = my_var;
-//});
-</script>
 
 
 <!-- Harness Feature Flag Module -->
@@ -95,16 +89,15 @@ window.githublogin = "<? echo $_ENV["GITHUB_LOGIN"]; ?>";
 //c8451467-ea97-44cb-8f34-f8275bde03fa //platform-demo
 //61aee676-f45e-4b92-ad6d-3cdb38679f4d //uat
       const cf = initialize('c8451467-ea97-44cb-8f34-f8275bde03fa', {
-    identifier: window.githublogin,
+    identifier: target,
 	attributes: {
-            lastUpdated: Date(),
-            host: location.href
+            lastUpdated: Date()
           }     // Target identifier
   });
 
   cf.on(Event.READY, flags => {
         console.log(JSON.stringify(flags, null, 2))
-		console.log("identifier: ["+window.githublogin+"]")
+		console.log("identifier: ["+target+"]")
       })
 
       cf.on(Event.CHANGED, flagInfo => {
@@ -128,9 +121,10 @@ window.githublogin = "<? echo $_ENV["GITHUB_LOGIN"]; ?>";
 						var imageUrl = "https://wallpaper.dog/large/17248916.jpg";
 					else
 						var imageUrl = $( "#background" ).val();
-					
-					console.log(imageUrl);
-					$(".banner-area").css("background", "url(" + imageUrl + ")");
+
+					if ($(".banner-area").css("background").toString().indexOf(imageUrl) < 0)
+						$(".banner-area").css("background", "url(" + imageUrl + ")");
+
 				}
 			//Custom Main Page Image
 			if (flagInfo["flag"] == "Landing_Page_logo")
@@ -278,6 +272,7 @@ function DoAction(v_action, v_value)
 							  <li>Logo: <form><input type="text" id="customer-logo" value="<?php echo $_SESSION['logo']; ?>"></form></li>
 							  <li>Background: <form><input type="text" id="background" value="<?php echo $_SESSION['background']; ?>"></form></li>
 							  <li>Link: <form><input type="text" id="link" value="<?php echo $_SESSION['link']; ?>"></form></li>
+							  <li><br>Current version: <?php echo $auth_version;?></li>
 				            </ul>
 				          </li>
 				        </ul>
@@ -503,7 +498,8 @@ $( "#link" ).change(function() {
 
 function loadcustomer(){
 	 //document.getElementById($hashtag).style.visibility = "visible";
-     document.location = "/" + window.githublogin +"?id=" + $( "#customer" ).val();
+	 var target = "<? echo $_ENV["GITHUB_LOGIN"]; ?>";
+     document.location = "/" + target +"?id=" + $( "#customer" ).val();
 }
 
 function GetName()
