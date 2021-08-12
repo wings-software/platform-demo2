@@ -16,7 +16,7 @@ Full Documentation (internal only): https://harness.atlassian.net/wiki/spaces/SE
 
 **As a crazy developer, you want to contribute and see your edit in action, in less than 5 minutes!**
 
-Application : http://platform-demo.harness.io/<GITHUB-LOGIN>
+Application : http://platform-demo.harness.io/GITHUB-LOGIN *(replace with your github login)*
 
 ## Step1
 - In GitHub, edit the file `nginx/src/a_HomePage.php`
@@ -24,6 +24,6 @@ Application : http://platform-demo.harness.io/<GITHUB-LOGIN>
 - You can go on **details** if you want to explore the build in Harness.
 
 ## Step2
-- Go to http://platform-demo.harness.io/<GITHUB-LOGIN>
+- Go to http://platform-demo.harness.io/GITHUB-LOGIN *(replace with your github login)*
 
 **DONE**
