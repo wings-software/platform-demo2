@@ -1,4 +1,4 @@
-# HarnessWebApp-demo
+# Harness : The Platform Demo
 
 A very simple Web/Mobile App to demonstrate how anyone can collaborate and improve your app!
 
