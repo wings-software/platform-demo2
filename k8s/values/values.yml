@@ -35,4 +35,5 @@ env:
   secrets:
     key2: value2
 
-firestoreSAGCPKey: <+secrets.getValue("gcp_sales_firestore_sa")>
+firestoreSAGCPKey: |
+  <+secrets.getValue("gcp_sales_firestore_sa")>
