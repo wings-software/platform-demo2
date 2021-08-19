@@ -4,7 +4,7 @@ ADD  src/ /usr/data/
 COPY composer.* ./
 RUN composer install
 
-FROM ecointet/php-nginx:7.1    
+FROM ecointet/php-nginx:7.1 as final   
 
 #RUN apt-get update && \
 #    apt-get install -y vim curl wget build-essential nginx supervisor gnupg2
