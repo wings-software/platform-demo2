@@ -1,7 +1,4 @@
 <?php
-session_save_path('/data-ext/sessions');
-ini_set('session.gc_probability', 1);
-session_start();
 include "a_HomePage.php";
 header("Cache-Control: no-cache, must-revalidate"); //HTTP 1.1
 header("Pragma: no-cache"); //HTTP 1.0

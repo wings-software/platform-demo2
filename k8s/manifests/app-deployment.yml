@@ -18,6 +18,16 @@ stringData:
 ---
 {{- end}}
 
+{{- if .Values.firestoreSAGCPKey}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{.Values.name}}-secret
+data:
+  gcp-firestore-service-account: {{.Values.firestoreSAGCPKey | b64enc}}
+---
+{{- end}}
+
 {{- if .Values.dockercfg}}
 apiVersion: v1
 kind: Secret
@@ -53,21 +63,18 @@ spec:
       - name: volume
         persistentVolumeClaim:
           claimName: {{.Values.volumeClaim}}-{{.Values.name}}
-      initContainers:
-      - name: php-data-permission-fix
-        image: busybox
-        #command: ["/bin/chmod","-R","777", "/data"]
-        command: ["/bin/sh","-c"]
-        args: ["/bin/chmod -R 777 /data && mkdir -p /data/sessions && /bin/chmod -R 777 /data"]
-        volumeMounts:
-        - name: volume
-          mountPath: /data
+      - name: service-accounts
+        secret:
+          secretName: {{.Values.name}}-secret
+          items:
+          - key: gcp-firestore-service-account
+            path: service-account-file.json
       containers:
       - name: {{.Values.name}}
         image: {{.Values.image}}
         volumeMounts:
-        - mountPath: /data-ext
-          name: volume
+        - name: service-accounts
+          mountPath: /opt/safile
         {{- if or .Values.env.config .Values.env.secrets}}
         envFrom:
         {{- if .Values.env.config}}

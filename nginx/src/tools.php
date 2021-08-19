@@ -1,12 +1,26 @@
 <?php
-session_save_path('/data-ext/sessions');
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Google\Cloud\Firestore\FirestoreClient;
+
+$projectId = getenv('GOOGLE_CLOUD_PROJECT');
+// Instantiate the Firestore Client for your project ID.
+$firestore = new FirestoreClient([
+	'projectId' => $projectId,
+]);
+
+$handler = $firestore->sessionHandler(['gcLimit' => 500]);
+// Configure PHP to use the the Firebase session handler.
+session_set_save_handler($handler, true);
+
+session_save_path('sessions');
 ini_set('session.gc_probability', 1);
 session_start();
 require_once "data/src/Store.php";
 $folder = __DIR__;
 $folder = "/data-ext";
 $databaseDirectory = $folder . "/demo-harness-database";
-$store = new \SleekDB\Store("demo-harness", $databaseDirectory);
+//$store = new \SleekDB\Store("demo-harness", $databaseDirectory);
 
 function getLogo()
 {}
@@ -15,7 +29,7 @@ function getLogo()
 if ($_GET["action"] == "update-customer")
 {
     $_SESSION["buyer"] = $_GET["value"];
-    insertPref($store);
+    insertPref($firestore);
     die("New Session Name! customer: [".$_SESSION["buyer"]."]");
 }
 
@@ -23,7 +37,7 @@ if ($_GET["action"] == "update-customer")
 if ($_GET["action"] == "update-logo")
 {
     $_SESSION["logo"] = $_GET["value"];
-    insertPref($store);
+    insertPref($firestore);
     die("New Session Name! logo: [".$_SESSION["logo"]."]");
 }
 
@@ -31,7 +45,7 @@ if ($_GET["action"] == "update-logo")
 if ($_GET["action"] == "update-background")
 {
     $_SESSION["background"] = $_GET["value"];
-    insertPref($store);
+    insertPref($firestore);
     die("New Session Name! background: [".$_SESSION["background"]."]");
 }
 
@@ -39,7 +53,7 @@ if ($_GET["action"] == "update-background")
 if ($_GET["action"] == "update-link")
 {
     $_SESSION["link"] = $_GET["value"];
-    insertPref($store);
+    insertPref($firestore);
     die("New Link ! link: [".$_SESSION["link"]."]");
 }
 
@@ -80,19 +94,28 @@ function readable_random_string($length = 6)
 }
 
 
-function readApi($store, $name)
+function readApi($firestore, $name)
 {
     //echo "DEBUG";
   //  echo "MY-DEBUG-READ".getenv("DB");
-    $value = $store->findOneBy(["name", "=", strtolower($name)]);
-   // echo $value;;
-   // print_r($value);
-    return $value;
+    $buyersCol = $firestore->collection('platform-demo-buyers');
+    $docRef = $buyersCol->document($name);
+    $snapshot = $docRef->snapshot();
+
+    if ($snapshot->exists()) {
+        //printf('Document data:' . PHP_EOL);
+        //print_r($snapshot->data());
+        return $snapshot->data();
+    } else {
+        //printf('Document %s does not exist!' . PHP_EOL, $snapshot->id());
+    }
 }
 
-function insertPref($store)
+function insertPref($firestore)
 {
-    $store->deleteBy(["name", "=", $_SESSION["buyer"]]);
+    $buyersCol = $firestore->collection('platform-demo-buyers');
+    $buyersCol->document($_SESSION["buyer"])->delete();
+    //$store->deleteBy(["name", "=", $_SESSION["buyer"]]);
 
     $data = [
         'name' => $_SESSION["buyer"],
@@ -100,7 +123,8 @@ function insertPref($store)
         'background' => $_SESSION["background"],
         'link' => $_SESSION["link"]
     ];
-
-    $results = $store->insert($data);
+    $addedDocRef = $buyersCol->document($_SESSION["buyer"])->set($data);
+    //printf('AddedDocRef:' . $addedDocRef);
+    //$results = $store->insert($data);
 }
 ?>

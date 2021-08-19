@@ -1,11 +1,26 @@
 <?php
-  //set headers to NOT cache a page
-  header("Cache-Control: no-cache, must-revalidate"); //HTTP 1.1
-  header("Pragma: no-cache"); //HTTP 1.0
-  header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
-  session_save_path('/data-ext/sessions');
-  ini_set('session.gc_probability', 1);
-  session_start();
+  
+require_once __DIR__ . '/vendor/autoload.php';
+
+use Google\Cloud\Firestore\FirestoreClient;
+
+$projectId = getenv('GOOGLE_CLOUD_PROJECT');
+// Instantiate the Firestore Client for your project ID.
+$firestore = new FirestoreClient([
+	'projectId' => $projectId,
+]);
+
+$handler = $firestore->sessionHandler(['gcLimit' => 500]);
+// Configure PHP to use the the Firebase session handler.
+session_set_save_handler($handler, true);
+
+//set headers to NOT cache a page
+header("Cache-Control: no-cache, must-revalidate"); //HTTP 1.1
+header("Pragma: no-cache"); //HTTP 1.0
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT"); // Date in the past
+session_save_path('sessions');
+ini_set('session.gc_probability', 1);
+session_start();
 
 require("tools.php");
 include "a_HomePage.php";
@@ -22,7 +37,8 @@ $_SESSION["device"] = $device;
 //CONTEXT
 if (!empty($_GET['id']))
 	{
-		$data = readApi($store, $_GET['id']);
+		$data = readApi($firestore, $_GET['id']);
+		//echo "DataFromFirestore:" . $data;
 		if ($data)
 			{
 				$_SESSION['buyer'] = $data["name"];
@@ -49,7 +65,9 @@ if (!isset($_SESSION['buyer']))
 	<!DOCTYPE html>
 	<html lang="zxx" class="no-js">
 	<head>
+	    <?php  if (isset($_ENV["GITHUB_LOGIN"])) { ?>
 		<base href="/<?php echo $_ENV["GITHUB_LOGIN"]; ?>/"/>
+		<?php  } ?>
 		<meta http-equiv="Cache-control" content="no-cache, must-revalidate">
 		<!-- Mobile Specific Meta -->
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -219,7 +237,7 @@ function DoAction(v_action, v_value)
 		url: 'tools.php',
 		data: {action: v_action, value: v_value},
 		success: function(data){
-			console.log(data);
+			//console.log(data);
 		}
 	});
 			

@@ -1,4 +1,4 @@
-name: harness-webapp-demo-<+pipeline.variables.githublogin>
+name: platformdemo-<+pipeline.variables.githublogin>
 replicas: 1
 github_login: <+pipeline.variables.githublogin>
 image: <+artifact.image>
@@ -30,5 +30,9 @@ env:
   config:
     DB: ""
     GITHUB_LOGIN: <+pipeline.variables.githublogin>
+    GOOGLE_APPLICATION_CREDENTIALS: "/opt/safile/service-account-file.json"
+    GOOGLE_CLOUD_PROJECT: <+pipeline.variables.GCPProject>
   secrets:
     key2: value2
+
+firestoreSAGCPKey: <+secrets.getValue("gcp_sales_firestore_sa")>

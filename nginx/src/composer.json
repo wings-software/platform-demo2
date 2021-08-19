@@ -1,0 +1,10 @@
+{
+    "require": {
+        "google/cloud": "0.163.1"
+        
+    },
+    "config": {
+
+        "platform-check": false
+    }
+}

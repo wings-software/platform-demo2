@@ -1,4 +1,10 @@
-FROM ecointet/php-nginx:7     
+FROM composer as builder
+WORKDIR /usr/data
+ADD  src/ /usr/data/
+COPY composer.* ./
+RUN composer install
+
+FROM ecointet/php-nginx:7.1    
 
 #RUN apt-get update && \
 #    apt-get install -y vim curl wget build-essential nginx supervisor gnupg2
@@ -24,11 +30,12 @@ COPY supervisord.conf /etc/
 
 COPY ./10-nginx.conf /etc/collectd/managed_config/
 ADD  src/ /usr/data/
+COPY --from=builder /usr/data/vendor /usr/data/vendor
 
 ARG GITHUBLOGIN
 RUN echo $GITHUBLOGIN > /usr/data/data/githublogin.txt
 
-RUN  chmod -R 777 /usr/data/
+#RUN  chmod -R 777 /usr/data/
 EXPOSE 8000
 
-CMD /usr/bin/supervisord -n -c /etc/supervisord.conf && chmod -R 777 /data-ext
+CMD /usr/bin/supervisord -n -c /etc/supervisord.conf 
