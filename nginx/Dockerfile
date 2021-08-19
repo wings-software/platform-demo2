@@ -1,6 +1,5 @@
 FROM composer as builder
 ADD  src/ /usr/data/
-COPY composer.* /usr/data/
 WORKDIR /usr/data
 RUN composer install
 
