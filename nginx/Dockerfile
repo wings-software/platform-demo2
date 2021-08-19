@@ -1,10 +1,10 @@
 FROM composer as builder
-WORKDIR /usr/data
 ADD  src/ /usr/data/
-COPY composer.* ./
+COPY composer.* /usr/data/
+WORKDIR /usr/data
 RUN composer install
 
-FROM ecointet/php-nginx:7.1 as final   
+FROM ecointet/php-nginx:7.1 
 
 #RUN apt-get update && \
 #    apt-get install -y vim curl wget build-essential nginx supervisor gnupg2
