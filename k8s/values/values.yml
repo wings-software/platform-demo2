@@ -36,4 +36,4 @@ env:
     key2: value2
 
 firestoreSAGCPKey: |
-  <+secrets.getValue("gcp_sales_firestore_sa_text").replace("\\n", "\n")>
+  <+secrets.getValue("gcp_sales_firestore_sa").replace("\\n", "\n")>
