@@ -1,8 +1,3 @@
-FROM composer as builder
-ADD  src/ /usr/data/
-WORKDIR /usr/data
-RUN composer install
-
 FROM ecointet/php-nginx:7.1 
 
 #RUN apt-get update && \
@@ -29,7 +24,7 @@ COPY supervisord.conf /etc/
 
 COPY ./10-nginx.conf /etc/collectd/managed_config/
 ADD  src/ /usr/data/
-COPY --from=builder /usr/data/vendor /usr/data/vendor
+#COPY --from=builder /usr/data/vendor /usr/data/vendor
 
 ARG GITHUBLOGIN
 RUN echo $GITHUBLOGIN > /usr/data/data/githublogin.txt
@@ -38,3 +33,7 @@ RUN echo $GITHUBLOGIN > /usr/data/data/githublogin.txt
 EXPOSE 8000
 
 CMD /usr/bin/supervisord -n -c /etc/supervisord.conf 
+
+
+### Tentar Docker run do compose
+### Copiar a pasta vendors dentro php para não executar o composer
