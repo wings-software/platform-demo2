@@ -1,44 +1,13 @@
-FROM composer as builder
-ADD  src/ /usr/data/
-WORKDIR /usr/data
-RUN composer install
-
-FROM ecointet/php-nginx:7.1 
-
-#RUN apt-get update && \
-#    apt-get install -y vim curl wget build-essential nginx supervisor gnupg2
-
-#RUN echo "deb http://packages.dotdeb.org jessie all" > /etc/apt/sources.list.d/dotdeb.list && \
-#    wget https://www.dotdeb.org/dotdeb.gpg && \
-#    apt-key add dotdeb.gpg
-
-#RUN apt-get update && apt-get install -y \
-#        libfreetype6-dev \
-#        libjpeg62-turbo-dev \
-#        libmcrypt-dev \
-#    && docker-php-ext-install pdo_mysql mysqli zip
+#This base image already adds the composer dependencies for firestore
+FROM fjunior87/phpfpm7-google-firestore:0.0.1
 
 COPY ./default /etc/nginx/sites-enabled
 COPY supervisord.conf /etc/
 
-#RUN apt-get update
-#RUN apt-get install -y emacs
-#RUN apt-get install -y mysql-server
-#RUN apt-get install -y apt-transport-https
-#RUN apt-get install -y stress
-
 COPY ./10-nginx.conf /etc/collectd/managed_config/
 ADD  src/ /usr/data/
-COPY --from=builder /usr/data/vendor /usr/data/vendor
 
-ARG GITHUBLOGIN
-RUN echo $GITHUBLOGIN > /usr/data/data/githublogin.txt
-
-#RUN  chmod -R 777 /usr/data/
 EXPOSE 8000
 
 CMD /usr/bin/supervisord -n -c /etc/supervisord.conf 
 
-
-### Tentar Docker run do compose
-### Copiar a pasta vendors dentro php para não executar o composer
