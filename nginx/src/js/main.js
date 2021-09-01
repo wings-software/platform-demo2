@@ -248,7 +248,9 @@ $(document).ready(function(){
 
 
         $(document).ready(function() {
+		console.log("I solemnly swear I am up to no good")
             $('#mc_embed_signup').find('form').ajaxChimp();
+		
         });      
 
 
