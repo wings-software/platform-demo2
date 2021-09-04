@@ -2,6 +2,7 @@
 /////////////////////////
 // --- HOME PAGE ---  //
 ///////////////////////
+// Alex forot html //
 
 $auth_version=1; // app Version (1 or 2)
 $auth_icon=""; // Image (only available with version 2)
