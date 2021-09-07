@@ -1,6 +1,6 @@
 <?php
 /////////////////////////
-// --- HOME PAGE ---  // echo hello world!
+// --- HOME PAGE ---  // 
 ///////////////////////
 
 $auth_version=2; // app Version (1 or 2)
