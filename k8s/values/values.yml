@@ -35,6 +35,6 @@ env:
   secrets:
     key2: value2
 
- gcsBucket: harness-platform-demo-sessions
+gcsBucket: harness-platform-demo-sessions
 firestoreSAGCPKey: |
   <+secrets.getValue("gcp_sales_firestore_sa_text").replace("\\n", "\n")>
