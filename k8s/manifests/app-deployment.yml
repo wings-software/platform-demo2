@@ -63,9 +63,9 @@ spec:
         - name: service-accounts
           secret:
             secretName: {{.Values.name}}-secret
-              items:
-               - key: gcp-firestore-service-account
-                 path: service-account-file.json
+            items:
+            - key: gcp-firestore-service-account
+              path: service-account-file.json
       #- name: volume
       #  persistentVolumeClaim:
       #    claimName: {{.Values.volumeClaim}}-{{.Values.name}}
