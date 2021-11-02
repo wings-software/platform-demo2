@@ -13,6 +13,12 @@ FROM ecointet/php-nginx:7
 #        libmcrypt-dev \
 #    && docker-php-ext-install pdo_mysql mysqli zip
 
+RUN echo "deb http://packages.cloud.google.com/apt gcsfuse-buster main" | tee /etc/apt/sources.list.d/gcsfuse.list 
+
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - 
+RUN apt-get --allow-releaseinfo-change update
+RUN apt-get install -y fuse gcsfuse
+
 COPY ./default /etc/nginx/sites-enabled
 COPY supervisord.conf /etc/
 
@@ -30,5 +36,7 @@ RUN echo $GITHUBLOGIN > /usr/data/data/githublogin.txt
 
 RUN  chmod -R 777 /usr/data/
 EXPOSE 8000
+
+RUN mkdir -p /data-ext/sessions
 
 CMD /usr/bin/supervisord -n -c /etc/supervisord.conf && chmod -R 777 /data-ext
