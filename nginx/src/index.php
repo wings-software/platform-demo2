@@ -292,7 +292,7 @@ function DoAction(v_action, v_value)
 							<h1>
 												
 							</h1>
-							<div id="vaccin" name="vaccin" id="vaccin" align="center"><a href="#login"><div align="center"><img src="img/loader.gif" width="200px" /></div></a></div>
+							<div id="vaccin" name="vaccin" id="vaccin" align="center"><a href="#login"><div align="center"><img src="img/loader.gif" width="50px" /></div></a></div>
 						</div>											
 					</div>
 				</div>
