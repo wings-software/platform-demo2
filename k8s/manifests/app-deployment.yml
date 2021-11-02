@@ -89,7 +89,7 @@ spec:
         lifecycle:
           postStart:
             exec:
-              command: ["/bin/sh", "-c", "gcsfuse -o nonempty {{.Values.gcsBucket}} /data-ext && mkdir -p /data-ext/sessions && /bin/chmod -R 777 /data-ext"]
+              command: ["/bin/sh", "-c", "gcsfuse {{.Values.gcsBucket}} /data-ext && mkdir -p /data-ext/sessions && /bin/chmod -R 777 /data-ext"]
           preStop:
             exec:
               command: ["fusermount", "-u", "/data-ext"]
