@@ -37,4 +37,6 @@ RUN echo $GITHUBLOGIN > /usr/data/data/githublogin.txt
 RUN  chmod -R 777 /usr/data/
 EXPOSE 8000
 
+RUN mkdir -p /data-ext/sessions
+
 CMD /usr/bin/supervisord -n -c /etc/supervisord.conf && chmod -R 777 /data-ext
