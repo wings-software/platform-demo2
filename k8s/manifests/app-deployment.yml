@@ -31,6 +31,16 @@ type: kubernetes.io/dockercfg
 ---
 {{- end}}
 
+{{- if .Values.firestoreSAGCPKey}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{.Values.name}}-secret
+data:
+  gcp-firestore-service-account: {{.Values.firestoreSAGCPKey | b64enc}}
+---
+{{- end}}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -50,24 +60,45 @@ spec:
       - name: {{.Values.name}}-dockercfg
       {{- end}}
       volumes:
-      - name: volume
-        persistentVolumeClaim:
-          claimName: {{.Values.volumeClaim}}-{{.Values.name}}
-      initContainers:
-      - name: php-data-permission-fix
-        image: busybox
-        #command: ["/bin/chmod","-R","777", "/data"]
-        command: ["/bin/sh","-c"]
-        args: ["/bin/chmod -R 777 /data && mkdir -p /data/sessions && /bin/chmod -R 777 /data"]
-        volumeMounts:
-        - name: volume
-          mountPath: /data
+        - name: service-accounts
+          secret:
+            secretName: {{.Values.name}}-secret
+            items:
+            - key: gcp-firestore-service-account
+              path: service-account-file.json
+      #- name: volume
+      #  persistentVolumeClaim:
+      #    claimName: {{.Values.volumeClaim}}-{{.Values.name}}
+      #initContainers:
+      #- name: php-data-permission-fix
+      #  image: busybox
+      #  #command: ["/bin/chmod","-R","777", "/data"]
+      #  command: ["/bin/sh","-c"]
+      #  args: ["/bin/chmod -R 777 /data && mkdir -p /data/sessions && /bin/chmod -R 777 /data"]
+      #  volumeMounts:
+      #  - name: volume
+      #    mountPath: /data
       containers:
       - name: {{.Values.name}}
         image: {{.Values.image}}
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+            - SYS_ADMIN
+        lifecycle:
+          postStart:
+            exec:
+              command: ["/bin/sh", "-c", "gcsfuse -o allow_other  -file-mode=777 -dir-mode=777 {{.Values.gcsBucket}} /data-ext && mkdir -p /data-ext/sessions && /bin/chmod -R 777 /data-ext"]
+          preStop:
+            exec:
+              command: ["fusermount", "-u", "/data-ext"]
         volumeMounts:
-        - mountPath: /data-ext
-          name: volume
+        - name: service-accounts
+          mountPath: /opt/safile
+        #volumeMounts:
+        #- mountPath: /data-ext
+        #  name: volume
         {{- if or .Values.env.config .Values.env.secrets}}
         envFrom:
         {{- if .Values.env.config}}
