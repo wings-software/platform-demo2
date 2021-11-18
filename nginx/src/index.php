@@ -198,7 +198,7 @@ function DoAction(v_action, v_value)
 							  <li>Logo: <form><input type="text" id="customer-logo" value="<?php echo $_SESSION['logo']; ?>"></form></li>
 							  <li>Background: <form><input type="text" id="background" value="<?php echo $_SESSION['background']; ?>"></form></li>
 							  <li>Link: <form><input type="text" id="link" value="<?php echo $_SESSION['link']; ?>"></form></li>
-							  <li><br>Current version: <?php echo $auth_version;?></li>
+							  <li><br>Current version: <?php echo $auth_version;?>.5</li>
 				            </ul>
 				          </li>
 				        </ul>
@@ -484,47 +484,49 @@ loadvaccin(); // This will run on page load
 	  function flagSelector(flagInfo)
 	  {
 		  	//Update the page if required only
-			FeatureFlagMng(flagInfo["flag"],flagInfo["value"]);
+			if (FeatureFlagMng(flagInfo["flag"],flagInfo["value"]))
+			{
 		  
-		  	//Custom Background
-			if (flagInfo["flag"] == "Custom_Background")
+				//Custom Background
+				if (flagInfo["flag"] == "Custom_Background")
+					{
+						if (flagInfo["value"] == true)
+							var imageUrl = "https://wallpaper.dog/large/17248916.jpg";
+						else
+							var imageUrl = $( "#background" ).val();
+
+						if ($(".banner-area").css("background").toString().indexOf(imageUrl) < 0)
+							$(".banner-area").css("background", "url(" + imageUrl + ")");
+
+					}
+
+				//Custom Main Page Image
+				if (flagInfo["flag"] == "Landing_Page_logo")
 				{
 					if (flagInfo["value"] == true)
-						var imageUrl = "https://wallpaper.dog/large/17248916.jpg";
+						var image = "img/canary-french.png";
 					else
-						var imageUrl = $( "#background" ).val();
-
-					if ($(".banner-area").css("background").toString().indexOf(imageUrl) < 0)
-						$(".banner-area").css("background", "url(" + imageUrl + ")");
-
+						var image = "img/captain-america.png";
+					
+					console.log(image);	
+					$('#vaccin').html('<a href="'+$( "#link" ).val()+'"><img src="'+image+'" width="200px" /></a>');
 				}
 
-			//Custom Main Page Image
-			if (flagInfo["flag"] == "Landing_Page_logo")
-			{
-				if (flagInfo["value"] == true)
-					var image = "img/canary-french.png";
-				else
-					var image = "img/captain-america.png";
-				
-				console.log(image);	
-				$('#vaccin').html('<a href="'+$( "#link" ).val()+'"><img src="'+image+'" width="200px" /></a>');
-			}
+				//Fashion Captain Canary
+				if (flagInfo["flag"] == "Captain_Canary_Fashion")
+				{
+					var image = "img/"+flagInfo["value"]+"_captain-america.png";
+			
+					console.log(image);	
+					$('#vaccin').html('<a href="'+$( "#link" ).val()+'"><img src="'+image+'" width="200px" /></a>');
+				}
 
-			//Fashion Captain Canary
-			if (flagInfo["flag"] == "Captain_Canary_Fashion")
-			{
-				var image = "img/"+flagInfo["value"]+"_captain-america.png";
-		
-				console.log(image);	
-				$('#vaccin').html('<a href="'+$( "#link" ).val()+'"><img src="'+image+'" width="200px" /></a>');
-			}
-
-			//Redirect To the Custom Link
-			if (flagInfo["flag"] == "Redirect_People_to_the_Survey")
-			{
-				if (flagInfo["value"] == true)
-					window.location.replace($( "#link" ).val());
+				//Redirect To the Custom Link
+				if (flagInfo["flag"] == "Redirect_People_to_the_Survey")
+				{
+					if (flagInfo["value"] == true)
+						window.location.replace($( "#link" ).val());
+				}
 			}
 
 	  }
@@ -534,11 +536,15 @@ loadvaccin(); // This will run on page load
 			if (window.flags_session[FlagId] === undefined || window.flags_session[FlagId] === FlagValue)
 			{
 				window.flags_session[FlagId] = FlagValue;
+				return 0;
 			}
 			else
 			{
 				clearInterval(window.interval);
+				console.log("Feature Flag Applied! / "+FlagId+" - "+FlagValue);
 				console.log("Refresher has been stopped (Flag "+FlagId+") has been Changed for your Identifier");
+				window.flags_session[FlagId] = FlagValue;
+				return 1;
 			}
 			//console.log("session("+FlagId+"/"+FlagValue+"):"+window.flags_session[FlagId])
 	  }
