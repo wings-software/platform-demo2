@@ -8,6 +8,7 @@
   session_start();
 
 require("tools.php");
+include "a_HomePage.php";
 require_once "mobile-detect/Mobile_Detect.php";
 
 $detect = new Mobile_Detect;
@@ -71,93 +72,12 @@ if (!isset($_SESSION['buyer']))
 
 <script>
 var interval = null;
-var target = "<? echo $_ENV["GITHUB_LOGIN"]; ?>"
+var target = "<? echo $_ENV["GITHUB_LOGIN"]; ?>";
+//var target = "ecointet" //debug
+var flags_session = [];
 </script>
 <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-
-<script>
-window.githublogin = "<? echo $_ENV["GITHUB_LOGIN"]; ?>";
-// GET GITHUBLOGIN variable
-//$.get("data/githublogin.txt", function( my_var ) {
-//	githublogin = my_var;
-//});
-</script>
-
-
-<!-- Harness Feature Flag Module -->
-<script type="module">
-      import { initialize, Event } from 'https://unpkg.com/@harnessio/ff-javascript-client-sdk@1.4.4/dist/sdk.client.js'
-
-      const log = msg => {
-        document.querySelector('#log').innerHTML += `${msg}\n`
-      }
-//c8451467-ea97-44cb-8f34-f8275bde03fa //platform-demo
-//61aee676-f45e-4b92-ad6d-3cdb38679f4d //uat
-      const cf = initialize('c8451467-ea97-44cb-8f34-f8275bde03fa', {
-    identifier: window.githublogin,
-	attributes: {
-            lastUpdated: Date(),
-            host: location.href
-          }     // Target identifier
-  });
-
-  cf.on(Event.READY, flags => {
-        console.log(JSON.stringify(flags, null, 2))
-		console.log("identifier: ["+window.githublogin+"]")
-      })
-
-      cf.on(Event.CHANGED, flagInfo => {
-        if (flagInfo.deleted) {
-          console.log('Flag is deleted')
-          console.log(JSON.stringify(flagInfo, null, 2))
-        } else {
-          console.log('Flag is changed')
-          console.log(JSON.stringify(flagInfo, null, 2))
-		
-		  flagSelector(flagInfo);
-        }
-      })
-
-	  function flagSelector(flagInfo)
-	  {
-		  	//Custom Background
-			if (flagInfo["flag"] == "Custom_Background")
-				{
-					if (flagInfo["value"] == true)
-						var imageUrl = "https://wallpaper.dog/large/17248916.jpg";
-					else
-						var imageUrl = $( "#background" ).val();
-					
-					console.log(imageUrl);
-					$(".banner-area").css("background", "url(" + imageUrl + ")");
-				}
-			//Custom Main Page Image
-			if (flagInfo["flag"] == "Landing_Page_logo")
-			{
-				clearInterval(window.interval);
-
-				if (flagInfo["value"] == true)
-					var image = "img/canary-french.png";
-				else
-					var image = "img/captain-america.png";
-				
-				console.log(image);	
-				$('#vaccin').html('<a href="'+$( "#link" ).val()+'"><img src="'+image+'" width="200px" /></a>');
-			}
-
-			//Redirect To the Custom Link
-			if (flagInfo["flag"] == "Redirect_People_to_the_Survey")
-			{
-				clearInterval(window.interval);
-
-				if (flagInfo["value"] == true)
-					window.location.replace($( "#link" ).val());
-			}
-
-	  }
-</script>
-
 
 
 <!--===============================================================================================-->	
@@ -278,6 +198,7 @@ function DoAction(v_action, v_value)
 							  <li>Logo: <form><input type="text" id="customer-logo" value="<?php echo $_SESSION['logo']; ?>"></form></li>
 							  <li>Background: <form><input type="text" id="background" value="<?php echo $_SESSION['background']; ?>"></form></li>
 							  <li>Link: <form><input type="text" id="link" value="<?php echo $_SESSION['link']; ?>"></form></li>
+							  <li><br>Current version: <?php echo $auth_version;?>.5</li>
 				            </ul>
 				          </li>
 				        </ul>
@@ -297,7 +218,7 @@ function DoAction(v_action, v_value)
 							<h1>
 												
 							</h1>
-							<div id="vaccin" name="vaccin" id="vaccin" align="center"><a href="#login"><div align="center"><img src="img/captain-america.png" width="200px" /></div></a></div>
+							<div id="vaccin" name="vaccin" id="vaccin" align="center"><a href="#login"><div align="center"><img src="img/loader.gif" width="50px" /></div></a></div>
 						</div>											
 					</div>
 				</div>
@@ -503,7 +424,8 @@ $( "#link" ).change(function() {
 
 function loadcustomer(){
 	 //document.getElementById($hashtag).style.visibility = "visible";
-     document.location = "/" + window.githublogin +"?id=" + $( "#customer" ).val();
+	 var target = "<? echo $_ENV["GITHUB_LOGIN"]; ?>";
+     document.location = "/" + target +"?id=" + $( "#customer" ).val();
 }
 
 function GetName()
@@ -524,4 +446,107 @@ loadvaccin(); // This will run on page load
 //GetName();
 			</script>
 		</body>
+		<!-- Harness Feature Flag Module -->
+<script type="module">
+      import { initialize, Event } from 'https://unpkg.com/@harnessio/ff-javascript-client-sdk@1.4.9/dist/sdk.client.js'
+
+      const log = msg => {
+        document.querySelector('#log').innerHTML += `${msg}\n`
+      }
+//c8451467-ea97-44cb-8f34-f8275bde03fa //platform-demo
+//61aee676-f45e-4b92-ad6d-3cdb38679f4d //uat
+      const cf = initialize('c8451467-ea97-44cb-8f34-f8275bde03fa', {
+    identifier: target,
+	attributes: {
+            lastUpdated: Date(),
+			demo: "platform-demo",
+			version:"1.5"
+          }     // Target identifier
+  });
+
+  cf.on(Event.READY, flags => {
+        console.log(JSON.stringify(flags, null, 2))
+		console.log("identifier: ["+target+"]")
+      })
+
+      cf.on(Event.CHANGED, flagInfo => {
+        if (flagInfo.deleted) {
+          console.log('Flag is deleted')
+          console.log(JSON.stringify(flagInfo, null, 2))
+        } else {
+          console.log('Flag is changed')
+          console.log(JSON.stringify(flagInfo, null, 2))
+		
+		  flagSelector(flagInfo);
+        }
+      })
+
+	  function flagSelector(flagInfo)
+	  {
+		  	//Update the page if required only
+			if (FeatureFlagMng(flagInfo["flag"],flagInfo["value"]))
+			{
+		  
+				//Custom Background
+				if (flagInfo["flag"] == "Custom_Background")
+					{
+						if (flagInfo["value"] == true)
+							var imageUrl = "https://wallpaper.dog/large/17248916.jpg";
+						else
+							var imageUrl = $( "#background" ).val();
+
+						if ($(".banner-area").css("background").toString().indexOf(imageUrl) < 0)
+							$(".banner-area").css("background", "url(" + imageUrl + ")");
+
+					}
+
+				//Custom Main Page Image
+				if (flagInfo["flag"] == "Landing_Page_logo")
+				{
+					if (flagInfo["value"] == true)
+						var image = "img/canary-french.png";
+					else
+						var image = "img/captain-america.png";
+					
+					console.log(image);	
+					$('#vaccin').html('<a href="'+$( "#link" ).val()+'"><img src="'+image+'" width="200px" /></a>');
+				}
+
+				//Fashion Captain Canary
+				if (flagInfo["flag"] == "Captain_Canary_Fashion")
+				{
+					var image = "img/"+flagInfo["value"]+"_captain-america.png";
+			
+					console.log(image);	
+					$('#vaccin').html('<a href="'+$( "#link" ).val()+'"><img src="'+image+'" width="200px" /></a>');
+				}
+
+				//Redirect To the Custom Link
+				if (flagInfo["flag"] == "Redirect_People_to_the_Survey")
+				{
+					if (flagInfo["value"] == true)
+						window.location.replace($( "#link" ).val());
+				}
+			}
+
+	  }
+
+	  function FeatureFlagMng(FlagId, FlagValue)
+	  {
+			if (window.flags_session[FlagId] === undefined || window.flags_session[FlagId] === FlagValue)
+			{
+				window.flags_session[FlagId] = FlagValue;
+				return 0;
+			}
+			else
+			{
+				clearInterval(window.interval);
+				console.log("Feature Flag Applied! / "+FlagId+" - "+FlagValue);
+				console.log("Refresher has been stopped (Flag "+FlagId+") has been Changed for your Identifier");
+				window.flags_session[FlagId] = FlagValue;
+				return 1;
+			}
+			//console.log("session("+FlagId+"/"+FlagValue+"):"+window.flags_session[FlagId])
+	  }
+</script>
 	</html>
