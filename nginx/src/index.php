@@ -40,7 +40,7 @@ if (!empty($_GET['id']))
 //DEFAULT
 if (!isset($_SESSION["link"]) || empty($_SESSION["link"])) $_SESSION["link"] = "https://harness.io/";
 if (!isset($_SESSION["logo"]) || empty($_SESSION["logo"])) $_SESSION["logo"] = "img/harness-logo.png";
-if (!isset($_SESSION["background"]) || empty($_SESSION["background"])) $_SESSION["background"] = "http://avante.biz/wp-content/uploads/Background-Pics-HD/Background-Pics-HD-001.jpg";
+if (!isset($_SESSION["background"]) || empty($_SESSION["background"])) $_SESSION["background"] = "img/background1.jpeg";
 if (!isset($_SESSION['buyer']))
 {
     $_SESSION['buyer'] = readable_random_string();
