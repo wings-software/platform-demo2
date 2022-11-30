@@ -1,3 +1,5 @@
 
 k8s/.DS_Store
 .DS_Store
+*.sdb
+nginx/src/demo-harness-database/demo-harness/cache/9cbd170798eac56b938224e2e551b6ca.no_lifetime.json

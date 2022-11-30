@@ -30,5 +30,11 @@ env:
   config:
     DB: ""
     GITHUB_LOGIN: <+pipeline.variables.githublogin>
+    GOOGLE_APPLICATION_CREDENTIALS: "/opt/safile/service-account-file.json"
+    GOOGLE_CLOUD_PROJECT: <+pipeline.variables.GCPProject>
   secrets:
     key2: value2
+
+gcsBucket: harness-platform-demo-sessions
+firestoreSAGCPKey: |
+  <+secrets.getValue("gcp_sales_firestore_sa_text").replace("\\n", "\n")>
